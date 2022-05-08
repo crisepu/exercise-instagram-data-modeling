@@ -16,14 +16,21 @@ class User(Base):
     name = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
+    favorite_people = relationship('Favorite_People', backref="user")
+    favorite_planet = relationship('Favorite_Planet', backref="user")
+    favorite_starship = relationship('Favorite_Starship', backref="user")
+
 
 class People(Base):
     __tablename__ = 'people'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
+    name = Column(String(250), nullable=False)
     gender = Column(String(250))
+    height = Column(Integer, nullable=False)
+    favorite_people = relationship('Favorite_People', backref="people")
+    
 
 class Planet(Base):
     __tablename__ = 'planet'
@@ -31,43 +38,38 @@ class Planet(Base):
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
-    population = Column(Integer)
+    population = Column(Integer, nullable=False)
+    climate = Column(String(255), nullable=False)
+    favorite_planet = relationship('Favorite_Planet', backref="planet")
 
 class Starship(Base):
     __tablename__ = 'starship'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
-    passengers = Column(Integer)
+    name = Column(String(250), nullable=False)
+    passengers = Column(Integer, nullable=False)
+    model= Column(String(250), nullable=False)
+    favorite_starship = relationship('Favorite_Starship', backref="starship")
     
 
-class favoritePeople(Base):
+class Favorite_People(Base):
     __tablename__ = 'favorite_people'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True, )
-    
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
-
-    def to_dict(self):
-        return {}
-
-
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    user_id= Column(Integer, ForeignKey('user.id'))
+    people_id= Column(Integer, ForeignKey('people.id'))
+
+class Favorite_Planet(Base):
+    __tablename__ = 'favorite_planet'
+    id = Column(Integer, primary_key=True)
+    user_id= Column(Integer, ForeignKey('user.id'))
+    planet_id= Column(Integer, ForeignKey('planet.id'))
+
+class Favorite_Starship(Base):
+    __tablename__ = 'favorite_starship'
+    id = Column(Integer, primary_key=True)
+    user_id= Column(Integer, ForeignKey('user.id'))
+    starship_id= Column(Integer, ForeignKey('starship.id'))
 
     def to_dict(self):
         return {}
