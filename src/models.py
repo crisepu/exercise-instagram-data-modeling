@@ -8,68 +8,42 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'user'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class Profile(Base):
+    __tablename__ = 'profile'
     id = Column(Integer, primary_key=True)
+    nickname = Column(String(250), nullable=False)
     name = Column(String(250), nullable=False)
-    password = Column(String(250), nullable=False)
+    last_name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
-    favorite_people = relationship('Favorite_People', backref="user")
-    favorite_planet = relationship('Favorite_Planet', backref="user")
-    favorite_starship = relationship('Favorite_Starship', backref="user")
+    age = Column(Integer, nullable=False)
+    follower = relationship('Follower', backref="profile")
+    post = relationship('Post', backref="profile")
+    comment = relationship('Comment', backref="profile")
 
 
-class People(Base):
-    __tablename__ = 'people'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class Follower(Base):
+    __tablename__ = 'follower'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    gender = Column(String(250))
-    height = Column(Integer, nullable=False)
-    favorite_people = relationship('Favorite_People', backref="people")
-    
+    profile_from_id= Column(Integer, ForeignKey('profile.id'))
+    profile_to_id = Column(Integer, ForeignKey('profile.id'))
 
-class Planet(Base):
-    __tablename__ = 'planet'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class Post(Base):
+    __tablename__ = 'post'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
-    population = Column(Integer, nullable=False)
-    climate = Column(String(255), nullable=False)
-    favorite_planet = relationship('Favorite_Planet', backref="planet")
+    title = Column(String(250), nullable=False)
+    image = Column(String(250))
+    text = Column(String(250), nullable=False)
+    date = Column(String(250), nullable=False)
+    profile_id = Column(Integer, ForeignKey('profile.id'))
+    comment = relationship('Comment', backref="post")   
 
-class Starship(Base):
-    __tablename__ = 'starship'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class Comment(Base):
+    __tablename__ = 'comment'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    passengers = Column(Integer, nullable=False)
-    model= Column(String(250), nullable=False)
-    favorite_starship = relationship('Favorite_Starship', backref="starship")
-    
-
-class Favorite_People(Base):
-    __tablename__ = 'favorite_people'
-    id = Column(Integer, primary_key=True)
-    user_id= Column(Integer, ForeignKey('user.id'))
-    people_id= Column(Integer, ForeignKey('people.id'))
-
-class Favorite_Planet(Base):
-    __tablename__ = 'favorite_planet'
-    id = Column(Integer, primary_key=True)
-    user_id= Column(Integer, ForeignKey('user.id'))
-    planet_id= Column(Integer, ForeignKey('planet.id'))
-
-class Favorite_Starship(Base):
-    __tablename__ = 'favorite_starship'
-    id = Column(Integer, primary_key=True)
-    user_id= Column(Integer, ForeignKey('user.id'))
-    starship_id= Column(Integer, ForeignKey('starship.id'))
+    text = Column(String(250), nullable=False)
+    date = Column(String(250), nullable=False)
+    profile_id = Column(Integer, ForeignKey('profile.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
 
     def to_dict(self):
         return {}
